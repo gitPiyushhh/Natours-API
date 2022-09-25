@@ -6,7 +6,6 @@ const Review = require('./../models/reviewModel')
 
 const factory = require('./../controllers/handlerFactory');
 
-
 exports.setTourUserIds = (req, res, next) => {
     // If value of tour not passed in the body then it must be from the nested route {Allow nested routes }
     if (!req.body.tour) { req.body.tour = req.params.tourId }

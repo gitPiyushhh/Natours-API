@@ -13,6 +13,7 @@ exports.getOverview = catchAsync(async (req, res) => {
   });
 });
 
+
 exports.getTour = catchAsync(async (req, res) => {
   // 1. Get the data for the requested tour
   const tour = await Tour.findOne({slug: req.params.slug}).populate({

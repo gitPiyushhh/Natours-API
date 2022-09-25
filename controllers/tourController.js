@@ -5,7 +5,6 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./../controllers/handlerFactory');
 // Reading the tours here
-
 // const tours = JSON.parse(
 //     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 // );

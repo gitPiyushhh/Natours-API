@@ -7,6 +7,7 @@ const factory = require('./../controllers/handlerFactory');
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
 
+  
   Object.keys(obj).forEach(el => {
     if(allowedFields.includes(el)) newObj[el] = obj[el]; // Create new key value pair with obj[el]
   })

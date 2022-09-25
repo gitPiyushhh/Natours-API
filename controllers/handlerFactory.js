@@ -7,6 +7,7 @@ exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id); // All names should be generic
 
+  
     if (!doc) {
       return next(new AppError('No tour fonund with id', 404));
     }

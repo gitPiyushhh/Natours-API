@@ -16,6 +16,7 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+
 // Setting up the template engine {for frontend}
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // We need to confirm that either we recive the request has '/' or not, the path is alwas correct

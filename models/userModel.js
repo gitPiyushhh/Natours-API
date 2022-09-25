@@ -20,6 +20,7 @@
 //     validate: [validator.isEmail, 'Please enter a valid email'],
 //   },
 
+
 //   photo: {
 //     type: String,
 //   },

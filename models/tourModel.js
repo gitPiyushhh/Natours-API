@@ -157,6 +157,7 @@ tourSchema.virtual('reviews', {
   localField: '_id', // By what name the here ie the parent stores this data 'tour'
 });
 
+
 // MIDDLEWARES
 // Document Middleware
 tourSchema.pre('save', function (next) {
