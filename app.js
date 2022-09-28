@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const { expressCspHeader, INLINE, SELF } = require('express-csp-header');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -47,6 +49,9 @@ app.use('/api', limiter); // Use the limiter middleware in all the req through t
 // Body Parser, reading data from the body to req.body
 app.use(express.json({ limit: '10kb' }));
 
+// Parsing the cookie {for frontend}
+app.use(cookieParser());
+
 // Data santization against NOSQL query injection
 app.use(mongoSanitize()); // This just removes all the $ and other special characters from the requests that no mongo query can be passed in the req.params / req.body🙂
 
@@ -68,9 +73,36 @@ app.use(
 );
 
 
+// TO Fix AXIOS NOT DEFINED BUG
+app.use(expressCspHeader({
+  directives: {
+      'script-src': [SELF, INLINE, 'cdnjs.cloudflare.com'],
+  }
+}));
+
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8000');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
+
 // Very basic middleware {just for test}
 app.use((req, res, next) => {
-  // console.log(req.headers);
+  console.log(req.cookies); // Till this time the cookies are parsed by the cookie parse {for persisting the cookies for frontend}
   next();
 });
 

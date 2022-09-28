@@ -33,9 +33,8 @@ router.route('/distances/:latlng/unit/:unit').get(toursController.getDistances);
 
 router
   .route('/')
-  .get(toursController.getAllTours) // authController.protect This is the middleware fctn & is if true then return all values of Tours else no
+  .get(authController.protect, toursController.getAllTours) // authController.protect This is the middleware fctn & is if true then return all values of Tours else no
   .post(
-    authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
     toursController.createTour
   );

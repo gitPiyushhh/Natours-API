@@ -82,6 +82,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   // 1. Check if there is any token
@@ -90,6 +91,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  }
+
+  // Check for the tokens in the cookies
+  else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   // console.log(token)
@@ -121,6 +127,33 @@ exports.protect = catchAsync(async (req, res, next) => {
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
   next();
+});
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  let token;
+  // 1. Check if there is any token
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+
+    // 2. Chk if the token is valid or not
+    const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET); // Return an decoded object with id and others params
+
+    // 3. Check if the user still exist
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+      return next();
+    }
+
+    // 4. Chk if the user changed the password after the token was issud
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    // THERE IS A LOGGED IN USER
+    res.locals.user = currentUser;
+    return next();
+  }
+  next(); // If there is no user then also we have to pass to the next middleware
 });
 
 exports.restrictTo = (...roles) => {
