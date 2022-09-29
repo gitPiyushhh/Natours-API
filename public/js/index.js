@@ -2,9 +2,11 @@
 
 // This file if for getting the data from the user & delegate the actions
 import { login } from './login';
+import { logout } from './login';
 
 // DOM ELEMENTS
 const loginForm = document.querySelector('.form');
+const logOutBtn = document.querySelector('.nav__el--logout');
 
 // VALUES
 // const email = document.getElementById('email').value;
@@ -18,4 +20,9 @@ if (loginForm) {
     const password = document.getElementById('password').value;
     login(email, password);
   });
+}
+
+
+if(logOutBtn) {
+  logOutBtn.addEventListener('click', logout)
 }

@@ -82,8 +82,15 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  });
+  res.status(200).json({ status: 'success' });
+};
 
-exports.protect = catchAsync(async (req, res, next) => {
+exports.protect = (async (req, res, next) => {
   let token;
   // 1. Check if there is any token
   if (
@@ -129,8 +136,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  let token;
+exports.isLoggedIn = async (req, res, next) => {
+  try {let token;
   // 1. Check if there is any token
   if (req.cookies.jwt) {
     token = req.cookies.jwt;
@@ -153,8 +160,13 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     res.locals.user = currentUser;
     return next();
   }
+}
+// If the JWT token was not verified, we just simply send the flow to {return the next(); middleware.. Not rendeting any err therefore not using any catchAsync otherwise its just gonna send to global err catcher}
+catch(err) {
+  return next();
+}
   next(); // If there is no user then also we have to pass to the next middleware
-});
+};
 
 exports.restrictTo = (...roles) => {
   // This is a wrapper fctn to provide the middleware fctn access to the 'roles'
